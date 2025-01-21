@@ -11,7 +11,7 @@
 
 
 # TO DO:
-### make it so that the board updates in real time instead of appearing multiple times in a the console.
+### make it so that the board updates in real time instead of appearing multiple times in the console.
 ### make it so that i can choose the card with arrow keys instead of it being a 1-20 choice
 ### add colors to make it pretty and easier to read
 ### maybe update the UI whenever i'll learn how to do that

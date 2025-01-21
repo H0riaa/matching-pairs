@@ -1,5 +1,6 @@
 #include <iostream>
 #include <time.h>
+#include <windows.h>
 
 
 void swap(int &a, int &b)
@@ -21,8 +22,10 @@ void shuffle(int arr[], int size)
 
 }
 
-void board(const int board[], const bool revealed[], int size)
+void board(const int board[], const bool revealed[], int size, bool pause = false)
 {
+    system("cls"); 
+
     for(int i = 0; i < size; i++)
     {
         if(revealed[i])
@@ -38,10 +41,10 @@ void board(const int board[], const bool revealed[], int size)
         {
             std::cout << '\n';
         }
-
     }
 
 }
+
 
 
 
@@ -50,15 +53,10 @@ int main()
     srand((unsigned int)time(0));
 
     const int SIZE = 20;
-    int cards[SIZE];
+    int cards[SIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
     bool revealed[SIZE] = {false};
     int matchesFound = 0;
     
-    for(int i = 0; i < 10; i++)
-    {
-        cards[i] = i + 1;
-        cards[i + 10] = i + 1;
-    }
 
     shuffle(cards, SIZE);
 
@@ -68,7 +66,7 @@ int main()
     {
         board(cards, revealed, SIZE);
         {
-            std::cout << "pick a card any card";
+            std::cout << "pick a card, any card";
             std::cin >> firstPick;
             firstPick--;
         }
@@ -97,7 +95,7 @@ int main()
         revealed[secondPick] = true;
         board(cards, revealed, SIZE);
 
-        if(firstPick[cards] == secondPick[cards])
+        if(cards[firstPick] == cards[secondPick])
         {
             std::cout << "nice\n";
             matchesFound++;
