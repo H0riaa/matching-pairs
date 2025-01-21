@@ -74,7 +74,7 @@ int main()
         }
         if(firstPick < 0 || firstPick >= SIZE || revealed[firstPick])
         {
-            std::cout << "try again nigga\n";
+            std::cout << "invalid move, try again\n";
             continue;
         }
     
@@ -89,7 +89,7 @@ int main()
 
     if(secondPick < 0 || secondPick >= SIZE || revealed[secondPick])
         {
-                std::cout << "try again nigga\n";
+                std::cout << "invalid move, try again\n";
                 revealed[firstPick] = false;
                 continue;
         }
@@ -104,7 +104,7 @@ int main()
         }
         else
         {
-            std::cout << "try again nigga\n";
+            std::cout << "invalid move, try again\n";
             revealed[firstPick] = false;
             revealed[secondPick] = false;
         }
