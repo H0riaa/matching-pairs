@@ -2,6 +2,10 @@
 #include <time.h>
 #include <windows.h>
 
+void swap();
+void shuffle();
+void board();
+void color();
 
 void swap(int &a, int &b)
 {
@@ -45,17 +49,26 @@ void board(const int board[], const bool revealed[], int size, bool pause = fals
 
 }
 
-
-
+void color(unsigned int id)
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), id);
+}
 
 int main()
 {
     srand((unsigned int)time(0));
 
     const int SIZE = 20;
-    int cards[SIZE] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int cards[SIZE] = {0};
     bool revealed[SIZE] = {false};
     int matchesFound = 0;
+    
+    for(int i = 0; i < 10; i++)
+    {
+        cards[i] = i + 1;
+        cards[i + 10] = i + 1;
+
+    }
     
 
     shuffle(cards, SIZE);
@@ -66,13 +79,14 @@ int main()
     {
         board(cards, revealed, SIZE);
         {
-            std::cout << "pick a card, any card";
+            std::cout << "pick a card, any card (1-20)";
             std::cin >> firstPick;
             firstPick--;
         }
         if(firstPick < 0 || firstPick >= SIZE || revealed[firstPick])
         {
             std::cout << "invalid move, try again\n";
+            Sleep(1000);
             continue;
         }
     
@@ -82,12 +96,14 @@ int main()
         board(cards, revealed, SIZE);
         
         std::cout << "pick a pair for the first card";
+        Sleep(1000);
         std::cin >> secondPick;
         secondPick--;
 
     if(secondPick < 0 || secondPick >= SIZE || revealed[secondPick])
         {
                 std::cout << "invalid move, try again\n";
+                Sleep(1000);
                 revealed[firstPick] = false;
                 continue;
         }
@@ -103,6 +119,7 @@ int main()
         else
         {
             std::cout << "invalid move, try again\n";
+            Sleep(2000);
             revealed[firstPick] = false;
             revealed[secondPick] = false;
         }
