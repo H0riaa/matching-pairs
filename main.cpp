@@ -4,7 +4,7 @@
 
 void swap(int &, int &);
 void shuffle(int[], int);
-void board(const int[], const bool[], const bool[], int, bool);
+void board(const int[], const bool[], const bool[], int, int);
 void color(unsigned int);
 
 void swap(int &a, int &b) {
@@ -20,26 +20,29 @@ void shuffle(int arr[], const int size) {
   }
 }
 
-void board(const int board[], const bool revealed[], const bool found[],
-           int size, bool pause = false) {
+void board(const int board[], const bool revealed[], const bool found[], int size, int cursor) {
   system("cls");
-
   for (int i = 0; i < size; i++) {
-    if (found[i]) {
-      color(2);
-      std::cout << board[i] << '\t';
-    } else if (revealed[i]) {
-      color(6);
-      std::cout << board[i] << '\t';
-    } else {
+      if (found[i]) {
+          color(2);
+          std::cout << board[i] << "\t";
+      } else if (revealed[i]) {
+          color(6);
+          std::cout << board[i] << "\t";
+      } else {
+          if (i == cursor) {
+              color(14);
+              std::cout << "[X]\t";
+          } else {
+              color(7);
+              std::cout << "X\t";
+          }
+      }
       color(7);
-      std::cout << "X\t";
-    }
-    color(7);
 
-    if ((i + 1) % 5 == 0) {
-      std::cout << '\n';
-    }
+      if ((i + 1) % 5 == 0) {
+          std::cout << '\n';
+      }
   }
 }
 
@@ -63,52 +66,75 @@ int main() {
 
   shuffle(cards, SIZE);
 
-  int firstPick, secondPick;
+  int cursor = 0;
+  int firstPick = -1, secondPick = -1;
 
   while (matchesFound < 10) {
-    board(cards, revealed, found, SIZE);
-    {
-      std::cout << "pick a card, any card (1-20)";
-      std::cin >> firstPick;
-      firstPick--;
+    board(cards, revealed, found, SIZE, cursor);
+
+    while(true){
+      if(GetAsyncKeyState(VK_UP) & 0x8000){
+        if(cursor >= 5){
+          cursor = cursor - 5;
+          Sleep(150);
+        }
+      }
+      
+      if(GetAsyncKeyState(VK_DOWN) & 0x8000){
+        if(cursor < SIZE - 5){
+          cursor += 5;
+          Sleep(150);
+        }
+      }
+      
+      if(GetAsyncKeyState(VK_LEFT) & 0x8000){
+        if(cursor > 0){
+          cursor--;
+          Sleep(150);
+        }
+      }
+
+      if(GetAsyncKeyState(VK_RIGHT) & 0x8000){
+        if(cursor < SIZE - 1){
+          cursor++;
+          Sleep(150);
+        }
+      }
+      
+      if(GetAsyncKeyState(VK_CONTROL) & 0x8000){
+        if(firstPick == -1) {
+          firstPick = cursor;
+          revealed[firstPick] = true;
+        }
+        else if(secondPick == -1) {
+          secondPick = cursor;
+          if(firstPick == secondPick) {
+            continue;
+          }
+          revealed[secondPick] = true;
+          break;
+        }
+        Sleep(150);
+      }
+      board(cards, revealed, found, SIZE, cursor);
     }
-    if (firstPick < 0 || firstPick >= SIZE || revealed[firstPick]) {
-      std::cout << "invalid move, try again\n";
-      Sleep(500);
-      continue;
-    }
 
-    revealed[firstPick] = true;
+    board(cards, revealed, found, SIZE, cursor);
+    Sleep(500);
 
-    board(cards, revealed, found, SIZE);
-
-    std::cout << "pick a pair for the first card";
-    std::cin >> secondPick;
-    secondPick--;
-
-    if (secondPick < 0 || secondPick >= SIZE || revealed[secondPick]) {
-      std::cout << "invalid move, try again\n";
-      Sleep(500);
-      revealed[firstPick] = false;
-      continue;
-    }
-
-    revealed[secondPick] = true;
-    board(cards, revealed, found, SIZE);
-
-    if (cards[firstPick] == cards[secondPick]) {
-      std::cout << "nice\n";
-      matchesFound++;
-
+    if(cards[firstPick] == cards[secondPick]) {
       found[firstPick] = true;
       found[secondPick] = true;
-      revealed[firstPick] = false;
-      revealed[secondPick] = false;
-    } else {
-      std::cout << "invalid move, try again\n";
-      Sleep(2000);
+      matchesFound++;
+    }
+    else {
       revealed[firstPick] = false;
       revealed[secondPick] = false;
     }
+
+    firstPick = -1;
+    secondPick = -1;
   }
+
+  return 0;
 }
