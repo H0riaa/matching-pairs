@@ -20,29 +20,34 @@ void shuffle(int arr[], const int size) {
   }
 }
 
-void board(const int board[], const bool revealed[], const bool found[], int size, int cursor) {
+void board(const int board[], const bool revealed[], const bool found[],
+           int size, int cursor) {
   system("cls");
   for (int i = 0; i < size; i++) {
-      if (found[i]) {
-          color(2);
-          std::cout << board[i] << "\t";
-      } else if (revealed[i]) {
-          color(6);
-          std::cout << board[i] << "\t";
+    if (found[i]) {
+      color(2);
+      if (i == cursor) {
+        std::cout << "[" << board[i] << "]\t";
       } else {
-          if (i == cursor) {
-              color(14);
-              std::cout << "[X]\t";
-          } else {
-              color(7);
-              std::cout << "X\t";
-          }
+        std::cout << board[i] << "\t";
       }
-      color(7);
+    } else if (revealed[i]) {
+      color(6);
+      std::cout << board[i] << "\t";
+    } else {
+      if (i == cursor) {
+        color(14);
+        std::cout << "[X]\t";
+      } else {
+        color(7);
+        std::cout << "X\t";
+      }
+    }
+    color(7);
 
-      if ((i + 1) % 5 == 0) {
-          std::cout << '\n';
-      }
+    if ((i + 1) % 5 == 0) {
+      std::cout << '\n';
+    }
   }
 }
 
@@ -72,68 +77,65 @@ int main() {
   while (matchesFound < 10) {
     board(cards, revealed, found, SIZE, cursor);
 
-    while(true){
-      if(GetAsyncKeyState(VK_UP) & 0x8000){
-        if(cursor >= 5){
+    while (true) {
+      if (GetAsyncKeyState(VK_UP)) {
+        if (cursor >= 5) {
           cursor = cursor - 5;
-          Sleep(150);
         }
-      }
-      
-      if(GetAsyncKeyState(VK_DOWN) & 0x8000){
-        if(cursor < SIZE - 5){
-          cursor += 5;
-          Sleep(150);
-        }
-      }
-      
-      if(GetAsyncKeyState(VK_LEFT) & 0x8000){
-        if(cursor > 0){
-          cursor--;
-          Sleep(150);
-        }
+        break;
       }
 
-      if(GetAsyncKeyState(VK_RIGHT) & 0x8000){
-        if(cursor < SIZE - 1){
-          cursor++;
-          Sleep(150);
+      if (GetAsyncKeyState(VK_DOWN)) {
+        if (cursor < SIZE - 5) {
+          cursor += 5;
         }
+        break;
       }
-      
-      if(GetAsyncKeyState(VK_CONTROL) & 0x8000){
-        if(firstPick == -1) {
+
+      if (GetAsyncKeyState(VK_LEFT)) {
+        if (cursor > 0) {
+          cursor--;
+        }
+        break;
+      }
+
+      if (GetAsyncKeyState(VK_RIGHT)) {
+        if (cursor < SIZE - 1) {
+          cursor++;
+        }
+        break;
+      }
+
+      if (GetAsyncKeyState(VK_CONTROL)) {
+        if (firstPick == -1) {
           firstPick = cursor;
           revealed[firstPick] = true;
-        }
-        else if(secondPick == -1) {
+        } else if (secondPick == -1) {
           secondPick = cursor;
-          if(firstPick == secondPick) {
+          if (firstPick == secondPick) {
             continue;
           }
           revealed[secondPick] = true;
           break;
         }
-        Sleep(150);
+        break;
       }
-      board(cards, revealed, found, SIZE, cursor);
     }
 
     board(cards, revealed, found, SIZE, cursor);
-    Sleep(500);
 
-    if(cards[firstPick] == cards[secondPick]) {
+    if (cards[firstPick] == cards[secondPick]) {
       found[firstPick] = true;
       found[secondPick] = true;
       matchesFound++;
-    }
-    else {
+    } else if (firstPick != -1 && secondPick != -1) {
+      Sleep(500);
       revealed[firstPick] = false;
       revealed[secondPick] = false;
+      firstPick = -1;
+      secondPick = -1;
     }
-
-    firstPick = -1;
-    secondPick = -1;
+    Sleep(150);
   }
 
   return 0;
